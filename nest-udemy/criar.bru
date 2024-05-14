@@ -1,0 +1,20 @@
+meta {
+  name: criar
+  type: http
+  seq: 2
+}
+
+post {
+  url: http://localhost:3000/courses
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "id": "2",
+    "name": "curso fundamento",
+    "description": "curso sobre fundamento nest",
+    "tags": ["nodeJs", "nestjs", "javaScript", "typeScript"]
+  }
+}
