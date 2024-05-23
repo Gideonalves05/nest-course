@@ -2,13 +2,17 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { Course } from './entities/courses.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
+import { tag } from './entities/tags.entity';
 
 @Injectable()
 export class CoursesService {
         
 	constructor(
 	   @InjectRepository(Course)
-       private readonly courseRepository: Repository<Course>
+       private readonly courseRepository: Repository<Course>,
+
+	   @InjectRepository(tag)
+       private readonly tagRepository: Repository<tag>
 	){}
 
 	async findAll(){
@@ -55,6 +59,17 @@ export class CoursesService {
 		  }
 
 		  return this.courseRepository.remove(course)
+	}
+
+
+	private async preloadTagByName(name: string): Promise<tag> {
+		const tag = await this.tagRepository.findOne({where:{name}})
+          
+		if(tag){
+			return tag
+		}
+
+		return this.tagRepository.create({name})
 	}
 
 

@@ -5,7 +5,23 @@ meta {
 }
 
 post {
-  url: 
-  body: none
+  url: http://localhost:3000/courses
+  body: json
   auth: none
+}
+
+body:json {
+  
+    {
+      "name": "nestJs",
+      "description": "curso sobre fundamentos do framework nestJs",
+      "tags": [
+        "nodeJs",
+        "nestjs",
+        "javaScript",
+        "TypeScript"
+      ]
+    }
+  
+  
 }
