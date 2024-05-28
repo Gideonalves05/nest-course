@@ -3,6 +3,8 @@ import { Course } from './entities/courses.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { tag } from './entities/tags.entity';
+import { createCourseDTO } from './dto/create-course.dto';
+import { UpdateCourseDTO } from './dto/update-course.dto';
 
 @Injectable()
 export class CoursesService {
@@ -16,13 +18,16 @@ export class CoursesService {
 	){}
 
 	async findAll(){
-		return this.courseRepository.find()
+		return this.courseRepository.find({
+			relations: ['tags']
+		})
 	}
 
-	async findOne(id: number){
-        
+
+	async findOne(id: string){
 	  const course =  this.courseRepository.findOne({
-		where: {id}
+		where: {id},
+		relations: ['tags']
 	  })
 	  if(!course){
             throw new NotFoundException(`Course ID ${id} not found`)
@@ -30,15 +35,34 @@ export class CoursesService {
 	  return course
 	}
 
-	async create(createCourseDTO: any){
-       const course = this.courseRepository.create(createCourseDTO)
+
+
+	async create(createCourseDTO: createCourseDTO){
+	   const tags = await Promise.all(
+		  createCourseDTO.tags.map(name => this.preloadTagByName(name)),
+	   )
+
+       const course = this.courseRepository.create({
+           ...createCourseDTO,
+		   tags,
+	   })
+
        return this.courseRepository.save(course)
 	}
 
-	async update(id: number, updateCourseDTO: any){
+
+
+
+	async update(id: string, updateCourseDTO: UpdateCourseDTO){
+
+		const tags = updateCourseDTO.tags && await Promise.all(
+			updateCourseDTO.tags.map(name => this.preloadTagByName(name)),
+		 )
+
       const course = await this.courseRepository.preload({
 		...updateCourseDTO,
 		id,
+		tags,
 	  })
 
 	  if(!course){
@@ -49,7 +73,9 @@ export class CoursesService {
 	}
 
 
-	async remove(id: number){
+
+
+	async remove(id: string){
 		const course = await this.courseRepository.findOne({
 			where: {id} ,
 		})
@@ -60,6 +86,8 @@ export class CoursesService {
 
 		  return this.courseRepository.remove(course)
 	}
+
+
 
 
 	private async preloadTagByName(name: string): Promise<tag> {
