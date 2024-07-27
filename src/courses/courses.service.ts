@@ -8,14 +8,11 @@ import { UpdateCourseDTO } from './dto/update-course.dto';
 
 @Injectable()
 export class CoursesService {
-        
-	constructor(
-	   @InjectRepository(Course)
-       private readonly courseRepository: Repository<Course>,
+  @InjectRepository(Course)
+  private readonly courseRepository: Repository<Course>
 
-	   @InjectRepository(tag)
-       private readonly tagRepository: Repository<tag>
-	){}
+  @InjectRepository(tag)
+  private readonly tagRepository: Repository<tag>
 
 	async findAll(){
 		return this.courseRepository.find({

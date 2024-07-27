@@ -13,3 +13,6 @@ async function bootstrap() {
   await app.listen(3000);
 }
 bootstrap();
+
+// f65845390a00   docker compose start
+// 2f14db71acd4 docker mysql
